@@ -44,6 +44,11 @@ local_settings.py
 *.swo
 
 # -----------------
+# Node modules
+# -----------------
+
+node_modules/
+# -----------------
 # Render / deployment
 # -----------------
 
