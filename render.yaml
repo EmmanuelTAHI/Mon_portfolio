@@ -46,7 +46,6 @@ services:
   - type: web
     name: portfolio-frontend
     runtime: static
-    region: frankfurt
     rootDir: frontend
     buildCommand: npm ci && npm run build:render
     staticPublishPath: dist/frontend-app/browser

@@ -1,6 +1,5 @@
-// En production : sur Render, définir API_BASE_URL (URL du backend) avant le build.
-// Ce fichier est remplacé par scripts/replace-api-url.js lors de "npm run build:render".
+// Production : sur Vercel on utilise /api (proxy vers le backend). Sur Render, utiliser "npm run build:render" pour injecter l'URL du backend.
 export const environment = {
   production: true,
-  apiBase: 'https://YOUR_BACKEND.onrender.com',
+  apiBase: '/api',
 };
