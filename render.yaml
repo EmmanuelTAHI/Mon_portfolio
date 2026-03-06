@@ -1,14 +1,5 @@
-# Déploiement Render : Backend Django + Frontend Angular (static)
-# https://render.com/docs/blueprint-spec
-#
-# Créer deux services sur Render à partir de ce repo :
-# 1) Backend : Web Service (Django)
-# 2) Frontend : Static Site (sortie de ng build)
-#
-# Variables d'environnement à définir dans le dashboard Render pour chaque service.
-
 services:
-  # --- Backend API Django ---
+  # -------- Backend Django --------
   - type: web
     name: portfolio-api
     runtime: python
@@ -16,23 +7,18 @@ services:
     plan: free
     rootDir: backend
     buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
-    startCommand: python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DJANGO_DEBUG
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
-        value: .onrender.com
-      - key: DB_ENGINE
-        value: postgres
+        value: ".onrender.com"
       - key: DATABASE_URL
-        fromDatabase:
-          name: portfolio-db
-          property: connectionString
+        sync: false
       - key: CSRF_TRUSTED_ORIGINS
         sync: false
-        description: "Origines autorisées (ex: https://portfolio-frontend.onrender.com). À définir après création du frontend."
       - key: CONTACT_EMAIL
         sync: false
       - key: SMTP_USER
@@ -42,17 +28,16 @@ services:
       - key: SMTP_FROM_EMAIL
         sync: false
 
-  # --- Frontend Angular (Static Site) ---
+  # -------- Frontend Angular --------
   - type: web
     name: portfolio-frontend
     runtime: static
     rootDir: frontend
-    buildCommand: npm ci && npm run build:render
+    buildCommand: npm ci && npm run build
     staticPublishPath: dist/frontend-app/browser
     envVars:
       - key: API_BASE_URL
         sync: false
-        description: "URL complète du backend (ex: https://portfolio-api.onrender.com). Obligatoire pour que le front appelle l'API."
     headers:
       - path: /*
         name: X-Frame-Options
@@ -60,9 +45,3 @@ services:
       - path: /*
         name: X-Content-Type-Options
         value: nosniff
-
-# Base de données optionnelle (si pas de DB externe)
-databases:
-  - name: portfolio-db
-    region: frankfurt
-    plan: free
