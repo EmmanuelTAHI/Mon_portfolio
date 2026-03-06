@@ -1,19 +1,16 @@
-#!/bin/bash
-set -e
-
 # Aller dans le dossier backend
-cd backend || exit 1
+cd backend
 
-# Créer un environnement virtuel si il n'existe pas
-if [ ! -d "venv" ]; then
+# Créer l'environnement virtuel si inexistant
+if (!(Test-Path -Path "venv")) {
     python -m venv venv
-fi
+}
 
 # Activer l'environnement virtuel
-source venv/bin/activate
+. .\venv\Scripts\activate
 
 # Installer les dépendances
-pip install --upgrade pip
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 
 # Appliquer les migrations
