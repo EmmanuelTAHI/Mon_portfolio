@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -84,9 +85,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
-# PostgreSQL par défaut, fallback SQLite pour dev local sans DB
-
-if os.getenv("DB_ENGINE") == "postgres":
+# Si DATABASE_URL est défini (ex: Render), l'utiliser. Sinon PostgreSQL si DB_ENGINE=postgres, sinon SQLite.
+_database_url = os.getenv("DATABASE_URL")
+if _database_url:
+    import dj_database_url
+    DATABASES = {"default": dj_database_url.parse(_database_url)}
+elif os.getenv("DB_ENGINE") == "postgres":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -165,7 +169,7 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-# CSRF pour les API REST
+# CSRF : origines de confiance (frontend sur Render / Vercel). Ex: https://portfolio-frontend.onrender.com
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://frontend-qvgyw69m0-emmanueltahi14-8249s-projects.vercel.app/").split(",")
 
 

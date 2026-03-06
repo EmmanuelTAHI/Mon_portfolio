@@ -18,8 +18,11 @@ export class ProjectService {
 
   constructor(private http: HttpClient) {}
 
+  /** Liste de la première page (backend renvoie toujours une réponse paginée). */
   getAll(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.url);
+    return this.http.get<PaginatedProjectsResponse>(this.url).pipe(
+      map((res) => res.results ?? [])
+    );
   }
 
   getPaginated(page: number = 1, pageSize: number = 3): Observable<PaginatedProjectsResponse> {
