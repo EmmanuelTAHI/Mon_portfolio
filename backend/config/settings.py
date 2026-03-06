@@ -166,7 +166,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF pour les API REST
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost:4200,http://127.0.0.1:4200").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://frontend-qvgyw69m0-emmanueltahi14-8249s-projects.vercel.app/").split(",")
 
 
 # Email configuration (SMTP)

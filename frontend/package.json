@@ -29,6 +29,7 @@
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/typography": "^0.5.19",
     "@types/jasmine": "~5.1.0",
+    "angular-cli-ghpages": "^2.0.3",
     "autoprefixer": "^10.4.27",
     "daisyui": "^5.5.19",
     "jasmine-core": "~5.1.0",
