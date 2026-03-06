@@ -1,0 +1,19 @@
+@if (showLoading) {
+  <app-loading-screen />
+}
+<ng-container *ngIf="!showLoading">
+  <!-- Hero (accueil + Download CV) -->
+  <section id="hero" class="scroll-mt-24">
+    <app-hero />
+  </section>
+
+  <!-- Sections en flux vertical -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <app-about />
+    <app-skills />
+    <app-projects />
+    <app-experience />
+    <app-certifications />
+    <app-contact />
+  </div>
+</ng-container>

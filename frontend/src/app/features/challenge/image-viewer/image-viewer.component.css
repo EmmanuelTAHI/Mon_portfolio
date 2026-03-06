@@ -1,0 +1,102 @@
+.image-viewer-container {
+  background: radial-gradient(ellipse at top, rgba(0, 255, 159, 0.08), transparent 50%),
+    #000000;
+  min-height: 100vh;
+}
+
+.terminal-card {
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(0, 255, 159, 0.3);
+  box-shadow: 0 0 40px rgba(0, 255, 159, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.terminal-header {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(0, 255, 159, 0.3);
+}
+
+.btn-glitch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  border: 2px solid #00ff9f;
+  color: #00ff9f;
+  background: transparent;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-glitch::before,
+.btn-glitch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(0, 255, 159, 0.4);
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.btn-glitch:hover {
+  background: rgba(0, 255, 159, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 159, 0.5);
+}
+
+.btn-glitch:hover::before {
+  opacity: 1;
+  animation: glitch 1.2s infinite;
+}
+
+.btn-glitch:hover::after {
+  opacity: 1;
+  animation: glitch 1s reverse infinite;
+}
+
+.btn-glitch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out;
+}

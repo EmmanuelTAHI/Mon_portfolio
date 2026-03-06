@@ -1,0 +1,5 @@
+.section { padding: 4rem 0; }
+
+.cert-card:hover {
+  box-shadow: 0 0 20px rgba(0, 255, 159, 0.2);
+}

@@ -1,0 +1,90 @@
+<header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-black/95 backdrop-blur-md border-b border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <button type="button" (click)="scrollTo('hero')" class="flex items-center gap-2 font-jetbrains text-sm text-neonGreen hover:opacity-90 transition-all duration-300 group">
+        <span class="text-neonGreen/90 group-hover:drop-shadow-[0_0_8px_rgba(0,255,159,0.6)]">root&#64;sh00ter_X</span>
+        <span class="text-gray-500">:~</span>
+        <span class="text-neonGreen group-hover:drop-shadow-[0_0_8px_rgba(0,255,159,0.8)]">$</span>
+      </button>
+
+      <!-- Cyber control panel nav (desktop) -->
+      <nav class="hidden md:flex items-center gap-1 font-jetbrains text-xs">
+        <button (click)="scrollTo('hero')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-transparent hover:border-neonGreen/30 transition-all duration-300 group">
+          <svg class="w-4 h-4 text-gray-500 group-hover:text-neonGreen transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span>home</span>
+        </button>
+        <button (click)="scrollTo('about')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-transparent hover:border-neonGreen/30 transition-all duration-300 group">
+          <svg class="w-4 h-4 text-gray-500 group-hover:text-neonGreen transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          <span>about</span>
+        </button>
+        <button (click)="scrollTo('skills')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-transparent hover:border-neonGreen/30 transition-all duration-300 group">
+          <svg class="w-4 h-4 text-gray-500 group-hover:text-neonGreen transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span>skills</span>
+        </button>
+        <button (click)="scrollTo('projects')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-transparent hover:border-neonGreen/30 transition-all duration-300 group">
+          <svg class="w-4 h-4 text-gray-500 group-hover:text-neonGreen transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+          <span>projects</span>
+        </button>
+        <button (click)="scrollTo('experience')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-transparent hover:border-neonGreen/30 transition-all duration-300 group">
+          <svg class="w-4 h-4 text-gray-500 group-hover:text-neonGreen transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>experience</span>
+        </button>
+        <button (click)="scrollTo('certifications')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-transparent hover:border-neonGreen/30 transition-all duration-300 group">
+          <svg class="w-4 h-4 text-gray-500 group-hover:text-neonGreen transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+          <span>certs</span>
+        </button>
+        <button (click)="scrollTo('contact')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-transparent hover:border-neonGreen/30 transition-all duration-300 group">
+          <svg class="w-4 h-4 text-gray-500 group-hover:text-neonGreen transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <span>contact</span>
+        </button>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <button
+          (click)="toggleMenu()"
+          type="button"
+          class="md:hidden p-2 rounded-lg border border-white/20 text-gray-400 hover:bg-neonGreen/10 hover:text-neonGreen"
+          aria-label="Menu"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile: command panel drawer -->
+  @if (menuOpen) {
+    <nav class="md:hidden border-t border-white/10 bg-black/98 backdrop-blur-md font-jetbrains text-sm animate-fade-in">
+      <div class="px-4 py-3 grid grid-cols-2 gap-2">
+        <button (click)="scrollTo('hero')" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-white/10">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          home
+        </button>
+        <button (click)="scrollTo('about')" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-white/10">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          about
+        </button>
+        <button (click)="scrollTo('skills')" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-white/10">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          skills
+        </button>
+        <button (click)="scrollTo('projects')" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-white/10">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+          projects
+        </button>
+        <button (click)="scrollTo('experience')" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-white/10">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          experience
+        </button>
+        <button (click)="scrollTo('certifications')" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-white/10">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+          certs
+        </button>
+        <button (click)="scrollTo('contact')" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-400 hover:text-neonGreen hover:bg-neonGreen/10 border border-white/10">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          contact
+        </button>
+      </div>
+    </nav>
+  }
+</header>

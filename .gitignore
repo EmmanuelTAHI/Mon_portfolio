@@ -1,0 +1,50 @@
+# -----------------
+# PYTHON / DJANGO
+# -----------------
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Django stuff
+*.log
+local_settings.py
+
+# Environment variables
+.env
+.env.*
+
+# Media files
+/media
+
+# Static build files
+/staticfiles
+
+# -----------------
+# DATABASE
+# -----------------
+
+*.db
+*.sqlite3
+
+# -----------------
+# OS files
+# -----------------
+
+*.swp
+*.swo
+
+# -----------------
+# Render / deployment
+# -----------------
+
+.render

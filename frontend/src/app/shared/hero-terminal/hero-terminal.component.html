@@ -1,0 +1,44 @@
+<div class="hero-terminal terminal-card rounded-lg overflow-hidden border border-white/10 font-jetbrains text-base shadow-glow-cyan relative z-10">
+  <!-- Barre de titre style Kali / Arch : boutons rouge, jaune, vert -->
+  <div class="terminal-titlebar flex items-center gap-2 px-3 py-2.5 bg-[#2d2d2d] border-b border-white/10">
+    <span class="w-3 h-3 rounded-full bg-[#ff5f56]" aria-hidden="true"></span>
+    <span class="w-3 h-3 rounded-full bg-[#ffbd2e]" aria-hidden="true"></span>
+    <span class="w-3 h-3 rounded-full bg-[#27c93f]" aria-hidden="true"></span>
+    <span class="text-gray-500 text-sm ml-3 flex-1 truncate">root&#64;sh00ter_X:~</span>
+  </div>
+  <!-- Corps du terminal -->
+  <div class="terminal-body p-4 min-h-[11rem] overflow-hidden bg-[#0d1117]">
+    <!-- Ligne 1 : prompt + commande (ou en cours de frappe) -->
+    <div class="flex flex-wrap items-baseline gap-x-1 text-sm sm:text-base">
+      <span class="text-neonGreen select-none shrink-0">root&#64;sh00ter_X:~#</span>
+      @if (displayedLines.length > 0) {
+        <span class="text-gray-300">{{ displayedLines[0] }}</span>
+      }
+      @if (lineIndex === 0) {
+        <span class="text-gray-300">{{ currentLine }}</span>
+        <span
+          class="inline-block w-2 h-4 bg-neonGreen ml-0.5 align-middle shrink-0"
+          [class.invisible]="!showCursor"
+          aria-hidden="true"
+        ></span>
+      }
+    </div>
+    <!-- Lignes de contenu déjà tapées (role, nom, description) -->
+    @for (line of displayedLines; track $index) {
+      @if ($index > 0) {
+        <div class="text-gray-300 text-sm sm:text-base mt-1 break-words">{{ line }}</div>
+      }
+    }
+    <!-- Ligne en cours de frappe (après la commande) + curseur -->
+    @if (lineIndex > 0 && lineIndex <= contentLinesLength) {
+      <div class="flex flex-wrap items-baseline gap-x-0.5 mt-1 text-sm sm:text-base">
+        <span class="text-gray-300 break-words">{{ currentLine }}</span>
+        <span
+          class="inline-block w-2 h-4 bg-neonGreen ml-0.5 align-middle shrink-0"
+          [class.invisible]="!showCursor"
+          aria-hidden="true"
+        ></span>
+      </div>
+    }
+  </div>
+</div>
