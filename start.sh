@@ -6,7 +6,7 @@ cd backend || exit 1
 
 # Créer un environnement virtuel si il n'existe pas
 if [ ! -d "venv" ]; then
-    python3 -m venv venv
+    python -m venv venv
 fi
 
 # Activer l'environnement virtuel
