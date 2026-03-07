@@ -28,6 +28,7 @@ local_settings.py
 
 # Static build files
 /staticfiles
+/static
 
 # -----------------
 # DATABASE

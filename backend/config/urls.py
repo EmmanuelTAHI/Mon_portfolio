@@ -14,6 +14,7 @@ urlpatterns = [
     path("api/contact/", include("apps.contact.urls")),
     path("api/certifications/", include("apps.certifications.urls")),
     path("api/ctf/", include("apps.ctf.urls")),
+    path("api/blog/", include("apps.blog.urls")),
 ]
 
 if settings.DEBUG:

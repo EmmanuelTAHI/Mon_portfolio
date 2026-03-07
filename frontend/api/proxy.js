@@ -2,6 +2,8 @@
  * Proxy serverless Vercel → backend Django sur Render.
  * Toutes les requêtes /api/* sont renvoyées vers API_BASE_URL (ton service Render).
  * Définir sur Vercel : API_BASE_URL = https://ton-backend.onrender.com
+ *
+ * Avec rewrite source "/api/:path*" → destination "/api/proxy", Vercel envoie le path en query (?path=projects/1).
  */
 export default async function handler(req, res) {
   const backend = process.env.API_BASE_URL;
@@ -13,7 +15,15 @@ export default async function handler(req, res) {
     return;
   }
 
-  const pathAndQuery = (req.url || '/api').startsWith('/api') ? req.url : '/api' + (req.url || '');
+  // Path original : soit depuis la query (rewrite Vercel /api/:path* → /api/proxy?path=...), soit depuis req.url
+  const pathFromQuery = req.query && typeof req.query.path === 'string' ? req.query.path : null;
+  const pathOnly = pathFromQuery ? '/api/' + pathFromQuery : (req.url || '/api').split('?')[0] || '/api';
+  const queryString = (req.url || '').includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  const queryParams = new URLSearchParams(queryString);
+  if (pathFromQuery) queryParams.delete('path');
+  const qs = queryParams.toString();
+  const pathAndQuery = pathOnly + (qs ? '?' + qs : '');
+
   const targetUrl = backend.replace(/\/$/, '') + pathAndQuery;
 
   const headers = { ...req.headers };

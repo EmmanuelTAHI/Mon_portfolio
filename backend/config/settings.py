@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "apps.contact",
     "apps.certifications",
     "apps.ctf",
+    "apps.blog",
 ]
 
 MIDDLEWARE = [
@@ -171,8 +172,8 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-# CSRF : origines de confiance (frontend sur Render / Vercel). Ex: https://portfolio-frontend.onrender.com
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://frontend-qvgyw69m0-emmanueltahi14-8249s-projects.vercel.app/").split(",")
+# CSRF : origines de confiance (frontend sur Vercel). À définir sur Render, ex: https://ton-projet.vercel.app
+CSRF_TRUSTED_ORIGINS = [x.strip() for x in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if x.strip()]
 
 
 # Email configuration (SMTP)
