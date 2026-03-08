@@ -153,10 +153,12 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# Sur Render : à l'exécution le dossier media/ du repo n'est pas toujours disponible.
-# Au build on copie media/* dans static/media/ ; en prod on sert les médias depuis là.
+# Sur Render : le dossier media/ du repo n'est pas disponible à l'exécution.
+# On copie media/* dans static/media/ au build ; on expose les images sous /static/media/
+# pour que WhiteNoise les serve (tout ce qui est dans STATIC_ROOT est servi sous /static/).
 if os.getenv("RENDER_EXTERNAL_URL"):
     MEDIA_ROOT = STATIC_ROOT / "media"
+    MEDIA_URL = "/static/media/"
 
 # URL publique du backend pour construire les URLs des médias (images projets, etc.).
 # En local : mettre BACKEND_PUBLIC_URL=http://localhost:8000 dans .env.
