@@ -1,11 +1,16 @@
 """
 Charge les données réelles du portfolio (export local) sur la base Render.
-À lancer une fois sur Render Shell après avoir poussé portfolio_data.json dans backend/fixtures/.
+S'exécute automatiquement au build Render si backend/fixtures/portfolio_data.json existe.
+Sinon le build continue et load_initial_data garde les données de démo.
 
 Usage:
   python manage.py load_production_data           # charge fixtures/portfolio_data.json
-  python manage.py load_production_data --clear  # vide les données puis charge
+  python manage.py load_production_data --clear  # vide les données puis charge (utilisé au build)
 """
+import sys
+from pathlib import Path
+
+from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
@@ -28,6 +33,15 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        fixture_path = settings.BASE_DIR / "fixtures" / "portfolio_data.json"
+        if not fixture_path.exists():
+            self.stdout.write(
+                self.style.WARNING(
+                    f"No {fixture_path}. Skipping. Export locally with dumpdata and push backend/fixtures/portfolio_data.json"
+                )
+            )
+            sys.exit(1)
+
         if options["clear"]:
             self.stdout.write("Clearing existing data...")
             FlagAttempt.objects.all().delete()
@@ -43,13 +57,6 @@ class Command(BaseCommand):
         try:
             call_command("loaddata", "portfolio_data", verbosity=2, ignorenonexistent=True)
             self.stdout.write(self.style.SUCCESS("Production data loaded successfully."))
-        except FileNotFoundError:
-            self.stdout.write(
-                self.style.ERROR(
-                    "File backend/fixtures/portfolio_data.json not found. "
-                    "Export from local with: python manage.py dumpdata projects experience skills certifications blog "
-                    "--natural-foreign -e contenttypes -e auth.Permission -o backend/fixtures/portfolio_data.json"
-                )
-            )
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Load failed: {e}"))
+            sys.exit(1)

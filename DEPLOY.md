@@ -54,7 +54,7 @@ Le dossier `frontend/api/` est pris en compte par Vercel (Serverless Functions).
 ## Backend Django sur Render
 
 - **Root Directory** : `backend`
-- **Build Command** : `pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput`
+- **Build Command** : `pip install -r requirements.txt && python manage.py migrate --noinput && (python manage.py load_production_data --clear || python manage.py load_initial_data) && python manage.py collectstatic --noinput`
 - **Start Command** : `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 120`
 - **Variables d’environnement** (Render → Environment) :
   - `DJANGO_SECRET_KEY` : clé secrète (générer une valeur forte)
@@ -87,7 +87,7 @@ Le front appelle **/api** (même origine) ; le proxy Vercel envoie tout vers `AP
 1. Va sur [dashboard.render.com](https://dashboard.render.com) → **New** → **Web Service**.
 2. Connecte ton dépôt GitHub (celui qui contient ce portfolio).
 3. **Root Directory** : `backend`
-4. **Build Command** : `pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput`
+4. **Build Command** : `pip install -r requirements.txt && python manage.py migrate --noinput && (python manage.py load_production_data --clear || python manage.py load_initial_data) && python manage.py collectstatic --noinput`
 5. **Start Command** : `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT`
 6. Ajoute une **PostgreSQL** (Render → New → PostgreSQL) et copie l’**Internal Database URL** (ou External si tu préfères).
 7. Dans le Web Service → **Environment** :

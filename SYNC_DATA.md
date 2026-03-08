@@ -44,21 +44,17 @@ git push origin main
 
 ---
 
-## Étape 3 : Import sur Render
+## Étape 3 : Import sur Render (sans Shell)
 
-1. Attends la fin du déploiement Render (après ton push).
-2. **Render** → ton service backend → onglet **Shell** → **Connect**.
-3. Dans le Shell :
+Comme le Shell Render est une option payante, **l’import se fait automatiquement au build** :
 
-```bash
-cd backend
-python manage.py load_production_data --clear
-```
+1. Après avoir poussé **portfolio_data.json** (et éventuellement les images avec `git add -f backend/media/projects/`), Render redéploie.
+2. Pendant le **build**, la commande `load_production_data --clear` est exécutée :
+   - si **portfolio_data.json** est présent dans le repo → la base est vidée puis remplie avec tes données ;
+   - s’il est absent → le build continue et `load_initial_data` garde les données de démo.
+3. Ouvre ton site Vercel : tu devrais voir tes projets et expériences (et les images si **media/projects/** est bien poussé).
 
-`--clear` vide les données actuelles (démo + CTF) puis charge **portfolio_data.json**.  
-Sans `--clear`, la commande ne fait que charger la fixture (risque de conflits si les mêmes entités existent déjà).
-
-4. Vérifie : ouvre ton site Vercel, rafraîchis ; tu devrais voir tes projets et expériences, et les images si elles sont bien dans **media/projects/** sur le repo.
+Tu n’as rien à lancer à la main sur Render.
 
 ---
 

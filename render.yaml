@@ -6,7 +6,7 @@ services:
     runtime: python
     rootDir: backend
 
-    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py load_initial_data && python manage.py collectstatic --noinput
+    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput && (python manage.py load_production_data --clear || python manage.py load_initial_data) && python manage.py collectstatic --noinput
     startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 120
 
     envVars:
