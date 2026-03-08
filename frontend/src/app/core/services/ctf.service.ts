@@ -8,6 +8,10 @@ export interface StartChallengeResponse {
   message: string;
   instructions: string;
   resumed?: boolean;
+  already_completed?: boolean;
+  completion_time?: number;
+  rank?: number;
+  current_step?: number;
 }
 
 export interface SubmitFlagResponse {

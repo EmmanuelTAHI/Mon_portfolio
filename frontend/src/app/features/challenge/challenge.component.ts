@@ -186,6 +186,17 @@ export class ChallengeComponent implements OnInit, OnDestroy {
         localStorage.setItem('ctf_session_id', this.sessionId);
         localStorage.setItem('ctf_hacker_nickname', nickname);
         
+        // Si le challenge est déjà complété
+        if (response.already_completed) {
+          this.currentStep = 'success';
+          this.completionTime = response.completion_time || 0;
+          this.userRank = response.rank || 0;
+          this.animations = [];
+          this.showAnimation = true;
+          this.playAnimations();
+          return;
+        }
+
         // Si c'est une session reprise, restaurer l'état approprié
         if (response.resumed) {
           this.restoreSession(this.sessionId);
@@ -242,6 +253,7 @@ export class ChallengeComponent implements OnInit, OnDestroy {
         error: () => {}
       });
     }
+    // Clean up local timer and state
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
@@ -249,10 +261,13 @@ export class ChallengeComponent implements OnInit, OnDestroy {
     localStorage.removeItem('ctf_session_id');
     localStorage.removeItem('ctf_elapsed_time');
     localStorage.removeItem('ctf_hacker_nickname');
+    
+    // Reset component variables
     this.hackerNickname = '';
     this.sessionId = '';
     this.elapsedTime = 0;
-    this.router.navigate(['/']);
+    this.currentStep = 'nickname';
+    // Do not redirect, keep the user on the challenge page
   }
 
   formatTime(seconds: number): string {

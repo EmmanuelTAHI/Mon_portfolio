@@ -134,10 +134,33 @@ def start_challenge(request):
             'resumed': True
         }, status=status.HTTP_200_OK)
     
+    # Vérifier s'il existe une session complétée pour ce pseudo
+    completed_session = ChallengeSession.objects.filter(
+        hacker_nickname=hacker_nickname,
+        is_completed=True
+    ).order_by('-completed_at').first()
+
+    if completed_session:
+        try:
+            rank = completed_session.leaderboard_entry.rank
+        except:
+            rank = None
+
+        return Response({
+            'session_id': completed_session.session_id,
+            'message': 'Challenge already completed by this nickname.',
+            'instructions': '',
+            'resumed': False,
+            'already_completed': True,
+            'completion_time': completed_session.completion_time_seconds,
+            'rank': rank,
+            'current_step': 3
+        }, status=status.HTTP_200_OK)
+
     # Un pseudo ne peut être utilisé que pour une seule session active (après Stop, même pseudo peut recommencer)
     if ChallengeSession.objects.filter(hacker_nickname=hacker_nickname, is_active=True).exists():
         return Response({
-            'error': 'This nickname has already been used for a challenge. Choose another one.'
+            'error': 'This nickname is currently running an active challenge. Choose another one or abandon the running session.'
         }, status=status.HTTP_400_BAD_REQUEST)
     
     # Créer une nouvelle session (current_step=1 pour permettre directement l'accès au login)

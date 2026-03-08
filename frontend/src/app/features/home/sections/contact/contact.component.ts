@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SectionTitleComponent } from '@app/shared/section-title/section-title.component';
-import { ContactService } from '@app/core/services/contact.service';
-import { ContactPayload } from '@app/models/contact.model';
+import emailjs from '@emailjs/browser';
 
 @Component({
   selector: 'app-contact',
@@ -20,8 +19,6 @@ export class ContactComponent {
   sent = false;
   error = '';
 
-  constructor(private contactService: ContactService) {}
-
   submit(): void {
     this.error = '';
     if (!this.name.trim() || !this.email.trim() || !this.message.trim()) {
@@ -35,18 +32,26 @@ export class ContactComponent {
       return;
     }
     this.sending = true;
-    this.contactService.send({ name: this.name, email: this.email, message: this.message }).subscribe({
-      next: () => {
-        this.sent = true;
-        this.name = '';
-        this.email = '';
-        this.message = '';
-        this.sending = false;
+
+    // Use EmailJS directly
+    emailjs.send(
+      'service_dvdfxfg',     // Service ID
+      'template_8gnwokd',    // Template ID
+      {
+        user_name: this.name,
+        user_email: this.email,
+        user_message: this.message
       },
-      error: (err: { message?: string }) => {
-        this.error = err?.message || 'Failed to send. Try again or use social links.';
-        this.sending = false;
-      },
+      'vREBuWY3ZCsTyIFKc'    // Public Key
+    ).then((response) => {
+      this.sent = true;
+      this.name = '';
+      this.email = '';
+      this.message = '';
+      this.sending = false;
+    }).catch((err) => {
+      this.error = err?.text || 'Failed to send via EmailJS. Try again or use social links.';
+      this.sending = false;
     });
   }
 }
