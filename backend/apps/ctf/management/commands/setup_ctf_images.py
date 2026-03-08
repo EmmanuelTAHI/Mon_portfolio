@@ -59,7 +59,7 @@ class Command(BaseCommand):
             self.create_test_profile_image(profile_image_dest)
         
         # Créer l'image de caméra avec le second fragment
-        camera_image_path = os.path.join(media_ctf_dir, 'Ma_maison.jpg')
+        camera_image_path = os.path.join(media_ctf_dir, 'Ma_maison.png')
         self.stdout.write('Creation de l\'image de camera...')
         self.create_camera_image(camera_image_path)
         self.stdout.write(self.style.SUCCESS(f'[OK] Image de camera creee: {camera_image_path}'))

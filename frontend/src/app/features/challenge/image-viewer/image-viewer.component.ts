@@ -80,7 +80,7 @@ export class ImageViewerComponent implements OnInit {
       // Créer un élément <a> pour déclencher le téléchargement
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.download = 'Ma_maison.jpg';
+      link.download = 'Ma_maison.png';
       link.style.display = 'none';
       
       // Ajouter au DOM, cliquer, puis retirer

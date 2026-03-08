@@ -267,8 +267,8 @@ def download_image(request):
     if session.current_step < 2:
         return Response({'error': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
     
-    # Chemin de l'image avec métadonnées (chercher d'abord Ma_maison.jpg, sinon camera_image.png)
-    image_path = os.path.join(settings.MEDIA_ROOT, 'ctf', 'Ma_maison.jpg')
+    # Chemin de l'image avec métadonnées (Ma_maison.png, sinon camera_image.png)
+    image_path = os.path.join(settings.MEDIA_ROOT, 'ctf', 'Ma_maison.png')
     if not os.path.exists(image_path):
         image_path = os.path.join(settings.MEDIA_ROOT, 'ctf', 'camera_image.png')
     if not os.path.exists(image_path):
@@ -277,13 +277,11 @@ def download_image(request):
     try:
         with open(image_path, 'rb') as f:
             data = f.read()
-        # Détecter le type réel par magic bytes (PNG: 89 50 4E 47)
+        # Détecter le type par magic bytes (PNG: 89 50 4E 47)
         if data[:4] == b'\x89PNG':
             content_type = 'image/png'
-            filename = 'Ma_maison.png' if 'Ma_maison' in image_path else 'camera_image.png'
         else:
             content_type = 'image/jpeg'
-            filename = 'Ma_maison.jpg'
         return HttpResponse(data, content_type=content_type)
     except Exception as e:
         return Response({'error': 'Error reading image'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
