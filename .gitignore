@@ -23,9 +23,6 @@ local_settings.py
 .env
 .env.*
 
-# Media files
-/media
-
 # Static build files
 /staticfiles
 

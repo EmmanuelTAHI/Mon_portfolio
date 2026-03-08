@@ -23,10 +23,6 @@ local_settings.py
 .env
 .env.*
 
-# Media files (uploads). Pour déployer les images des projets sur Render,
-# ajoute-les à la main avec : git add -f backend/media/projects/
-/media
-
 # Static build files
 /staticfiles
 /static

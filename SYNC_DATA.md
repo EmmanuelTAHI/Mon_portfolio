@@ -26,21 +26,25 @@ Cela crée **backend/fixtures/portfolio_data.json** avec tes projets, expérienc
 
 ## Étape 2 : Images des projets
 
-Les images sont dans **backend/media/projects/** (et éventuellement **media/blog/**).  
-Le dossier `media` est ignoré par git ; pour le déployer quand même, utilise `git add -f` :
+**Sans ces images dans le repo, le site en prod affiche le placeholder « Photo du projet ».** Les images sont versionnées dans **backend/media/projects/** (le dossier `media` n’est plus dans le .gitignore).
 
-- Vérifie que **backend/media/projects/** contient bien les images de tes projets (CI-VOTE-MOBILE, etc.).
-- Puis, depuis la racine du repo :
+Les images doivent être dans **backend/media/projects/** avec **exactement** ces noms (tels que dans ta fixture) :
 
-```powershell
-cd c:\Users\emman\Downloads\PORTFOLIO
-git add backend/fixtures/portfolio_data.json
-git add -f backend/media/projects/
-git add -f backend/media/blog/
-git status
-git commit -m "Données prod + images projets pour Render"
-git push origin main
-```
+| Fichier attendu        | Projet              |
+|------------------------|---------------------|
+| `e_commerce.png`       | E-commerce Application |
+| `savoirs.png`          | Savoirs             |
+| `heg.png`              | CANTINE-HEG         |
+| `django_books.png`     | DJANGO_BOOKS        |
+| `ci_vote.png`          | CI-VOTE-MOBILE      |
+
+À faire :
+
+1. Crée le dossier `backend/media/projects/` s’il n’existe pas.
+2. Copie tes visuels dans ce dossier en les renommant comme ci‑dessus (ou ajuste la fixture si tu gardes d’autres noms).
+3. Commit et push (par ex. `git add .` puis `git commit` et `git push`).
+
+Après le redéploiement sur Render, les URLs `https://portfolio-backend-xxx.onrender.com/media/projects/xxx.png` serviront bien les images.
 
 ---
 
@@ -48,7 +52,7 @@ git push origin main
 
 Comme le Shell Render est une option payante, **l’import se fait automatiquement au build** :
 
-1. Après avoir poussé **portfolio_data.json** (et éventuellement les images avec `git add -f backend/media/projects/`), Render redéploie.
+1. Après avoir poussé **portfolio_data.json** et les images (**backend/media/projects/**), Render redéploie.
 2. Pendant le **build**, la commande `load_production_data --clear` est exécutée :
    - si **portfolio_data.json** est présent dans le repo → la base est vidée puis remplie avec tes données ;
    - s’il est absent → le build continue et `load_initial_data` garde les données de démo.
