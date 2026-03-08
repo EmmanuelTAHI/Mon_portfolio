@@ -118,4 +118,5 @@ Le front appelle **/api** (même origine) ; le proxy Vercel envoie tout vers `AP
 - Sur **Vercel** : vérifier que `API_BASE_URL` pointe bien vers l’URL Render.
 
 Ensuite ouvre l’URL Vercel : le site doit s’afficher et les appels API (projets, contact, etc.) passent par le proxy vers Render.
-Les **images des projets** s’affichent uniquement si sur Render la variable **`BACKEND_PUBLIC_URL`** est définie (URL du backend sans slash final). Les logs Render affichent alors « Project image resolved: projects/xxx.png » ; si un fichier manque, « Project image file missing » apparaît.
+Les **images des projets** s’affichent uniquement si sur Render la variable **`BACKEND_PUBLIC_URL`** est définie (URL du backend sans slash final). Les logs Render affichent alors « Project image resolved: projects/xxx.png » ; si un fichier manque, « Project image file missing » apparaît.  
+En cas de problème : à chaque build, la commande **`python manage.py diagnose_media`** s’exécute et affiche dans les logs Render un rapport (MEDIA_ROOT, fichiers présents, URL par projet, lien de test). Tu peux aussi la lancer à la main dans le Shell Render.
