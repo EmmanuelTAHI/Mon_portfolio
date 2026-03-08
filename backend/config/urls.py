@@ -26,6 +26,7 @@ def api_root(request):
 
 
 urlpatterns = [
+    path("", api_root),
     path("admin/", admin.site.urls),
     path("api/", api_root),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
