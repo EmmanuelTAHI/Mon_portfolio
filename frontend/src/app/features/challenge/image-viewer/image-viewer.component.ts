@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CtfService } from '../../../core/services/ctf.service';
+import { API_BASE } from '../../../core/constants/api';
 
+/**
+ * Affiche l'image du challenge CTF via une URL directe (pas de blob).
+ * Un paramètre _t (cache-buster) évite le cache navigateur/CDN et garantit un 200.
+ */
 @Component({
   selector: 'app-image-viewer',
   standalone: true,
@@ -10,110 +14,73 @@ import { CtfService } from '../../../core/services/ctf.service';
   templateUrl: './image-viewer.component.html',
   styleUrl: './image-viewer.component.css'
 })
-export class ImageViewerComponent implements OnInit {
+export class ImageViewerComponent implements OnInit, OnDestroy {
+  /** URL directe de l'image avec session_id et cache-buster. */
   imageUrl = '';
-  imageBlob: Blob | null = null;
-  imageLoading = false;
+  imageLoading = true;
   errorMessage = '';
   sessionId = '';
+  /** Permet de réessayer avec une nouvelle URL (nouveau _t). */
+  retryCount = 0;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
-    private ctfService: CtfService
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    // Récupérer le session_id depuis les query params
     this.route.queryParams.subscribe(params => {
       this.sessionId = params['session_id'];
       if (this.sessionId) {
-        this.loadImage();
+        this.buildAndLoadImage();
       } else {
-        this.errorMessage = 'Session ID missing';
-      }
-    });
-  }
-
-  loadImage(): void {
-    this.imageLoading = true;
-    this.errorMessage = '';
-    console.log('[ImageViewer] loadImage start session_id=', this.sessionId);
-
-    this.ctfService.downloadImage(this.sessionId).subscribe({
-      next: (blob) => {
-        console.log('[ImageViewer] next blob size=', blob?.size, 'type=', blob?.type);
-        if (blob && blob.size > 0) {
-          this.imageBlob = blob;
-          this.imageUrl = window.URL.createObjectURL(blob);
-          console.log('[ImageViewer] imageUrl set (blob URL) length=', this.imageUrl?.length);
-          this.imageLoading = false;
-        } else {
-          console.warn('[ImageViewer] blob empty or invalid', blob);
-          this.errorMessage = 'The received image is empty or invalid';
-          this.imageLoading = false;
-        }
-      },
-      error: (error) => {
-        console.error('[ImageViewer] error', error);
-        console.error('[ImageViewer] error.status=', error?.status, 'error.message=', error?.message, 'error.error=', error?.error);
-        if (error.status === 403) {
-          this.errorMessage = 'Access denied. Please log in first.';
-        } else if (error.status === 404) {
-          this.errorMessage = 'Image not found on server.';
-        } else {
-          this.errorMessage = 'Error loading image: ' + (error.error?.error || error.message || 'Unknown error');
-        }
+        this.errorMessage = 'Session manquante.';
         this.imageLoading = false;
       }
     });
   }
 
-  downloadImage(): void {
-    if (!this.imageBlob) {
-      this.errorMessage = 'Image not available for download';
-      return;
-    }
+  /** Construit l'URL d'image avec cache-buster pour forcer un 200 (éviter 304). */
+  private buildImageUrl(): string {
+    const base = API_BASE.replace(/\/$/, '');
+    const t = Date.now() + (this.retryCount > 0 ? this.retryCount * 1000 : 0);
+    return `${base}/ctf/download-image/?session_id=${encodeURIComponent(this.sessionId)}&_t=${t}`;
+  }
 
-    try {
-      // Créer une nouvelle URL d'objet pour le téléchargement (plus fiable)
-      const downloadUrl = window.URL.createObjectURL(this.imageBlob);
-      
-      // Créer un élément <a> pour déclencher le téléchargement
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = 'Ma_maison.jpg';
-      link.style.display = 'none';
-      
-      // Ajouter au DOM, cliquer, puis retirer
-      document.body.appendChild(link);
-      link.click();
-      
-      // Nettoyer après un court délai
-      setTimeout(() => {
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(downloadUrl);
-      }, 100);
-    } catch (error) {
-      console.error('Erreur lors du téléchargement:', error);
-      this.errorMessage = 'Error downloading image';
-    }
+  buildAndLoadImage(): void {
+    this.errorMessage = '';
+    this.imageLoading = true;
+    this.imageUrl = this.buildImageUrl();
+  }
+
+  onImageLoad(): void {
+    this.imageLoading = false;
+    this.errorMessage = '';
+  }
+
+  onImageError(): void {
+    this.imageLoading = false;
+    this.imageUrl = '';
+    this.errorMessage = 'Impossible de charger l’image. Vérifiez votre connexion ou réessayez.';
+  }
+
+  retry(): void {
+    this.retryCount++;
+    this.buildAndLoadImage();
+  }
+
+  /** Lien de téléchargement : même URL que l’affichage (fraîche). */
+  get downloadUrl(): string {
+    return this.imageUrl || (this.sessionId ? this.buildImageUrl() : '');
   }
 
   continue(): void {
-    // Rediriger vers la page du challenge pour continuer
     this.router.navigate(['/_my_challenge'], { queryParams: { session_id: this.sessionId, from_image: '1' } });
   }
 
-  /** Retour au challenge (même comportement que Continuer, raccourci visuel). */
   goBackToChallenge(): void {
     this.continue();
   }
 
-  ngOnDestroy(): void {
-    // Nettoyer l'URL de l'image
-    if (this.imageUrl) {
-      window.URL.revokeObjectURL(this.imageUrl);
-    }
-  }
+  ngOnDestroy(): void {}
 }
