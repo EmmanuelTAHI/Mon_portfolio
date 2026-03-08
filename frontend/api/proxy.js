@@ -5,6 +5,7 @@
  *
  * Gère correctement les réponses binaires (images, etc.) : utilisation de arrayBuffer()
  * et en-têtes Content-Type / Content-Length explicites pour éviter corruption et perte d'en-têtes.
+ * Pour /api/ctf/download-image/ : pas de cache (pas de 304), en-têtes no-cache forcés.
  *
  * Avec rewrite source "/api/:path*" → destination "/api/proxy", Vercel envoie le path en query (?path=...).
  */
@@ -28,10 +29,16 @@ export default async function handler(req, res) {
   const pathAndQuery = pathOnly + (qs ? '?' + qs : '');
 
   const targetUrl = backend.replace(/\/$/, '') + pathAndQuery;
+  const isImageDownload = pathOnly.toLowerCase().includes('download-image');
 
   const headers = { ...req.headers };
   delete headers.host;
   delete headers.connection;
+  // Pour l'image CTF : ne pas envoyer les en-têtes conditionnels pour forcer le backend à renvoyer 200 + corps (éviter 304)
+  if (isImageDownload) {
+    delete headers['if-none-match'];
+    delete headers['if-modified-since'];
+  }
 
   const opts = {
     method: req.method,
@@ -47,6 +54,14 @@ export default async function handler(req, res) {
     const contentLength = response.headers.get('content-length');
 
     res.status(response.status);
+
+    // Transmettre tous les en-têtes utiles du backend (dont Cache-Control, Pragma, Expires)
+    response.headers.forEach((value, name) => {
+      const n = name.toLowerCase();
+      if (n !== 'connection' && n !== 'keep-alive' && n !== 'transfer-encoding') {
+        res.setHeader(name, value);
+      }
+    });
 
     if (contentType.includes('application/json')) {
       const text = await response.text();
@@ -65,6 +80,12 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', contentType || 'application/octet-stream');
     if (contentLength !== undefined && contentLength !== null) {
       res.setHeader('Content-Length', contentLength);
+    }
+    // Forcer no-cache pour l'image CTF (contourner cache Vercel / navigateur et éviter 304)
+    if (isImageDownload) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
     }
     res.send(buffer);
   } catch (err) {
