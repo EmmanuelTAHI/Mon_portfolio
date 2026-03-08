@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, from, throwError } from 'rxjs';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import { API_BASE } from '../constants/api';
 
 export interface StartChallengeResponse {
@@ -69,8 +70,40 @@ export class CtfService {
     const params = new HttpParams().set('session_id', sessionId);
     return this.http.get(`${this.baseUrl}download-image/`, {
       params,
-      responseType: 'blob'
-    });
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(
+      map(response => {
+        const blob = response.body;
+        const contentType = response.headers.get('content-type') || '';
+        if (!response.ok || contentType.includes('application/json')) {
+          throw { blob, status: response.status };
+        }
+        if (!blob || blob.size === 0) {
+          throw { blob: null, status: response.status };
+        }
+        return blob;
+      }),
+      catchError(err => {
+        if (err.blob instanceof Blob && err.blob.size > 0) {
+          return from(err.blob.text() as Promise<string>).pipe(
+            switchMap((text: string) => {
+              let msg = 'Image not found on server.';
+              try {
+                const data = JSON.parse(text) as { error?: string };
+                if (data && typeof data.error === 'string') msg = data.error;
+              } catch (_) {}
+              return throwError(() => ({ status: err.status, error: { error: msg }, message: msg }));
+            })
+          );
+        }
+        return throwError(() => ({
+          status: err.status || 0,
+          error: { error: err.message || 'Error loading image' },
+          message: err.message || 'Error loading image'
+        }));
+      })
+    );
   }
 
   submitFinalFlag(sessionId: string, flag: string): Observable<FinalFlagResponse> {

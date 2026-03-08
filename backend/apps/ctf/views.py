@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django.core.cache import cache
-from django.http import JsonResponse, FileResponse
+from django.http import JsonResponse, FileResponse, HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -273,17 +273,18 @@ def download_image(request):
         image_path = os.path.join(settings.MEDIA_ROOT, 'ctf', 'camera_image.png')
     if not os.path.exists(image_path):
         return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
-    
+
     try:
-        file = open(image_path, 'rb')
-        # Déterminer le content-type selon l'extension
-        content_type = 'image/jpeg' if image_path.endswith('.jpg') or image_path.endswith('.jpeg') else 'image/png'
-        filename = 'Ma_maison.jpg' if image_path.endswith('.jpg') or image_path.endswith('.jpeg') else 'camera_image.png'
-        return FileResponse(
-            file,
-            content_type=content_type,
-            filename=filename
-        )
+        with open(image_path, 'rb') as f:
+            data = f.read()
+        # Détecter le type réel par magic bytes (PNG: 89 50 4E 47)
+        if data[:4] == b'\x89PNG':
+            content_type = 'image/png'
+            filename = 'Ma_maison.png' if 'Ma_maison' in image_path else 'camera_image.png'
+        else:
+            content_type = 'image/jpeg'
+            filename = 'Ma_maison.jpg'
+        return HttpResponse(data, content_type=content_type)
     except Exception as e:
         return Response({'error': 'Error reading image'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
