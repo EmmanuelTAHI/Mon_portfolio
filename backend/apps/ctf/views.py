@@ -291,17 +291,17 @@ def download_image(request):
     except Exception as e:
         logger.exception("[CTF download_image] erreur listdir media/ctf: %s", e)
 
-    # Chemin de l'image avec métadonnées (Ma_maison.png, sinon camera_image.png)
-    image_path = os.path.join(media_root, 'ctf', 'Ma_maison.png')
-    path_png_exists = os.path.exists(image_path)
-    logger.info("[CTF download_image] Ma_maison.png path=%s exists=%s", image_path, path_png_exists)
+    # Chemin de l'image (Ma_maison.jpg, sinon camera_image.png)
+    image_path = os.path.join(media_root, 'ctf', 'Ma_maison.jpg')
+    path_exists = os.path.exists(image_path)
+    logger.info("[CTF download_image] Ma_maison.jpg path=%s exists=%s", image_path, path_exists)
 
-    if not path_png_exists:
+    if not path_exists:
         image_path = os.path.join(media_root, 'ctf', 'camera_image.png')
         path_fallback_exists = os.path.exists(image_path)
         logger.info("[CTF download_image] fallback camera_image.png path=%s exists=%s", image_path, path_fallback_exists)
         if not path_fallback_exists:
-            logger.error("[CTF download_image] 404 Aucune image trouvée (ni Ma_maison.png ni camera_image.png)")
+            logger.error("[CTF download_image] 404 Aucune image trouvée (ni Ma_maison.jpg ni camera_image.png)")
             return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
     try:
