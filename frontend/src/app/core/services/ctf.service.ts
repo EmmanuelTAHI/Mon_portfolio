@@ -67,8 +67,11 @@ export class CtfService {
   }
 
   downloadImage(sessionId: string): Observable<Blob> {
+    const url = `${this.baseUrl}download-image/`;
     const params = new HttpParams().set('session_id', sessionId);
-    return this.http.get(`${this.baseUrl}download-image/`, {
+    console.log('[CTF downloadImage] request url=', url, 'session_id=', sessionId);
+
+    return this.http.get(url, {
       params,
       responseType: 'blob',
       observe: 'response'
@@ -76,15 +79,22 @@ export class CtfService {
       map(response => {
         const blob = response.body;
         const contentType = response.headers.get('content-type') || '';
+        const blobSize = blob?.size ?? 0;
+        console.log('[CTF downloadImage] response status=', response.status, 'content-type=', contentType, 'blob.size=', blobSize);
+
         if (!response.ok || contentType.includes('application/json')) {
+          console.warn('[CTF downloadImage] treating as error: ok=', response.ok, 'contentType=', contentType);
           throw { blob, status: response.status };
         }
         if (!blob || blob.size === 0) {
+          console.warn('[CTF downloadImage] empty or missing blob');
           throw { blob: null, status: response.status };
         }
+        console.log('[CTF downloadImage] success blob.type=', blob.type, 'size=', blob.size);
         return blob;
       }),
       catchError(err => {
+        console.error('[CTF downloadImage] catchError', err);
         if (err.blob instanceof Blob && err.blob.size > 0) {
           return from(err.blob.text() as Promise<string>).pipe(
             switchMap((text: string) => {
@@ -93,6 +103,7 @@ export class CtfService {
                 const data = JSON.parse(text) as { error?: string };
                 if (data && typeof data.error === 'string') msg = data.error;
               } catch (_) {}
+              console.warn('[CTF downloadImage] error body (parsed)', msg);
               return throwError(() => ({ status: err.status, error: { error: msg }, message: msg }));
             })
           );

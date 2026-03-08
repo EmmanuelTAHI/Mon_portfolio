@@ -9,6 +9,7 @@ from django.conf import settings
 import os
 import hashlib
 import re
+import logging
 
 from .models import ChallengeSession, LeaderboardEntry, FlagAttempt
 from .serializers import (
@@ -18,6 +19,8 @@ from .serializers import (
     LoginSerializer,
     LeaderboardEntrySerializer
 )
+
+logger = logging.getLogger(__name__)
 
 # Flag réel (jamais exposé au frontend)
 REAL_FLAG = "FLAG{root@sh00ter_X_V0u5_n3_Tr0uv3r3z_p@5_pr0ch@1n3m3nt}"
@@ -257,33 +260,70 @@ def ubiquiti_login(request):
 def download_image(request):
     """Télécharge l'image avec métadonnées (seulement si authentifié)"""
     session_id = request.GET.get('session_id')
+    logger.info("[CTF download_image] ENTRY session_id=%s", session_id)
+
     if not session_id:
+        logger.warning("[CTF download_image] 400 Session ID required")
         return Response({'error': 'Session ID required'}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     session = validate_session(session_id)
     if not session:
+        logger.warning("[CTF download_image] 404 Invalid or expired session")
         return Response({'error': 'Invalid or expired session'}, status=status.HTTP_404_NOT_FOUND)
-    
+
     if session.current_step < 2:
+        logger.warning("[CTF download_image] 403 Access denied current_step=%s", session.current_step)
         return Response({'error': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
-    
+
+    media_root = settings.MEDIA_ROOT
+    media_root_str = str(media_root) if media_root else repr(media_root)
+    logger.info("[CTF download_image] MEDIA_ROOT=%s", media_root_str)
+
+    ctf_dir = os.path.join(media_root, 'ctf')
+    logger.info("[CTF download_image] ctf_dir=%s exists=%s", ctf_dir, os.path.exists(ctf_dir))
+
+    try:
+        if os.path.isdir(ctf_dir):
+            list_ctf = os.listdir(ctf_dir)
+            logger.info("[CTF download_image] contenu media/ctf: %s", list_ctf)
+        else:
+            logger.warning("[CTF download_image] media/ctf n'est pas un dossier")
+    except Exception as e:
+        logger.exception("[CTF download_image] erreur listdir media/ctf: %s", e)
+
     # Chemin de l'image avec métadonnées (Ma_maison.png, sinon camera_image.png)
-    image_path = os.path.join(settings.MEDIA_ROOT, 'ctf', 'Ma_maison.png')
-    if not os.path.exists(image_path):
-        image_path = os.path.join(settings.MEDIA_ROOT, 'ctf', 'camera_image.png')
-    if not os.path.exists(image_path):
-        return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
+    image_path = os.path.join(media_root, 'ctf', 'Ma_maison.png')
+    path_png_exists = os.path.exists(image_path)
+    logger.info("[CTF download_image] Ma_maison.png path=%s exists=%s", image_path, path_png_exists)
+
+    if not path_png_exists:
+        image_path = os.path.join(media_root, 'ctf', 'camera_image.png')
+        path_fallback_exists = os.path.exists(image_path)
+        logger.info("[CTF download_image] fallback camera_image.png path=%s exists=%s", image_path, path_fallback_exists)
+        if not path_fallback_exists:
+            logger.error("[CTF download_image] 404 Aucune image trouvée (ni Ma_maison.png ni camera_image.png)")
+            return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
     try:
         with open(image_path, 'rb') as f:
             data = f.read()
+        data_len = len(data)
+        logger.info("[CTF download_image] fichier lu path=%s size=%s bytes", image_path, data_len)
+
+        if data_len == 0:
+            logger.error("[CTF download_image] 500 fichier vide")
+            return Response({'error': 'Image file is empty'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         # Détecter le type par magic bytes (PNG: 89 50 4E 47)
         if data[:4] == b'\x89PNG':
             content_type = 'image/png'
         else:
             content_type = 'image/jpeg'
+        logger.info("[CTF download_image] content_type=%s sending %s bytes", content_type, data_len)
+
         return HttpResponse(data, content_type=content_type)
     except Exception as e:
+        logger.exception("[CTF download_image] 500 Error reading image path=%s: %s", image_path, e)
         return Response({'error': 'Error reading image'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

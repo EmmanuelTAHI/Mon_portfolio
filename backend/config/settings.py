@@ -259,5 +259,10 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
+        "apps.ctf.views": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
     },
 }

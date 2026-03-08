@@ -38,23 +38,25 @@ export class ImageViewerComponent implements OnInit {
   loadImage(): void {
     this.imageLoading = true;
     this.errorMessage = '';
-    
+    console.log('[ImageViewer] loadImage start session_id=', this.sessionId);
+
     this.ctfService.downloadImage(this.sessionId).subscribe({
       next: (blob) => {
-        // Vérifier que le blob est valide
+        console.log('[ImageViewer] next blob size=', blob?.size, 'type=', blob?.type);
         if (blob && blob.size > 0) {
-          // Sauvegarder le blob pour le téléchargement
           this.imageBlob = blob;
-          // Créer une URL d'objet pour l'affichage
           this.imageUrl = window.URL.createObjectURL(blob);
+          console.log('[ImageViewer] imageUrl set (blob URL) length=', this.imageUrl?.length);
           this.imageLoading = false;
         } else {
+          console.warn('[ImageViewer] blob empty or invalid', blob);
           this.errorMessage = 'The received image is empty or invalid';
           this.imageLoading = false;
         }
       },
       error: (error) => {
-        console.error('Erreur lors du chargement de l\'image:', error);
+        console.error('[ImageViewer] error', error);
+        console.error('[ImageViewer] error.status=', error?.status, 'error.message=', error?.message, 'error.error=', error?.error);
         if (error.status === 403) {
           this.errorMessage = 'Access denied. Please log in first.';
         } else if (error.status === 404) {
