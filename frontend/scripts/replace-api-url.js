@@ -9,7 +9,8 @@ const envPath = path.join(__dirname, '../src/environments/environment.prod.ts');
 let content = fs.readFileSync(envPath, 'utf8');
 
 const apiBaseUrl = process.env.API_BASE_URL || process.env.RENDER_EXTERNAL_URL || 'https://YOUR_BACKEND.onrender.com';
-const urlEscaped = apiBaseUrl.replace(/'/g, "\\'");
+const finalApiBase = apiBaseUrl.replace(/\/$/, '') + '/api';
+const urlEscaped = finalApiBase.replace(/'/g, "\\'");
 content = content.replace(
   /apiBase:\s*'[^']*'/,
   `apiBase: '${urlEscaped}'`
