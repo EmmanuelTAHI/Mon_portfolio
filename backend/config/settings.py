@@ -146,6 +146,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "static"
 STATICFILES_DIRS = []
+FIXTURE_DIRS = [BASE_DIR / "fixtures"]
 # WhiteNoise: servir les fichiers statiques en production
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
