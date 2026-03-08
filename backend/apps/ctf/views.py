@@ -6,10 +6,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.conf import settings
-import os
+import base64
 import hashlib
-import re
 import logging
+import os
+import re
 
 from .models import ChallengeSession, LeaderboardEntry, FlagAttempt
 from .serializers import (
@@ -314,18 +315,20 @@ def download_image(request):
             logger.error("[CTF download_image] 500 fichier vide")
             return Response({'error': 'Image file is empty'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # Détecter le type par magic bytes (PNG: 89 50 4E 47)
         if data[:4] == b'\x89PNG':
             content_type = 'image/png'
         else:
             content_type = 'image/jpeg'
-        logger.info("[CTF download_image] content_type=%s sending %s bytes", content_type, data_len)
 
-        response = HttpResponse(data, content_type=content_type)
-        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response['Pragma'] = 'no-cache'
-        response['Expires'] = '0'
-        return response
+        encoded = base64.b64encode(data).decode('ascii')
+        logger.info("[CTF download_image] content_type=%s base64_len=%s original=%s bytes", content_type, len(encoded), data_len)
+
+        return Response({
+            'image_data': encoded,
+            'content_type': content_type,
+            'filename': os.path.basename(image_path),
+            'size': data_len,
+        }, status=status.HTTP_200_OK)
     except Exception as e:
         logger.exception("[CTF download_image] 500 Error reading image path=%s: %s", image_path, e)
         return Response({'error': 'Error reading image'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

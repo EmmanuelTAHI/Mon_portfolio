@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, from, throwError } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { API_BASE } from '../constants/api';
 
 export interface StartChallengeResponse {
@@ -29,6 +28,13 @@ export interface FinalFlagResponse {
   completion_time?: number;
   rank?: number;
   animations?: string[];
+}
+
+export interface ImageDataResponse {
+  image_data: string;
+  content_type: string;
+  filename: string;
+  size: number;
 }
 
 export interface LeaderboardEntry {
@@ -66,55 +72,10 @@ export class CtfService {
     });
   }
 
-  downloadImage(sessionId: string): Observable<Blob> {
+  downloadImage(sessionId: string): Observable<ImageDataResponse> {
     const url = `${this.baseUrl}download-image/`;
     const params = new HttpParams().set('session_id', sessionId);
-    console.log('[CTF downloadImage] request url=', url, 'session_id=', sessionId);
-
-    return this.http.get(url, {
-      params,
-      responseType: 'blob',
-      observe: 'response'
-    }).pipe(
-      map(response => {
-        const blob = response.body;
-        const contentType = response.headers.get('content-type') || '';
-        const blobSize = blob?.size ?? 0;
-        console.log('[CTF downloadImage] response status=', response.status, 'content-type=', contentType, 'blob.size=', blobSize);
-
-        if (!response.ok || contentType.includes('application/json')) {
-          console.warn('[CTF downloadImage] treating as error: ok=', response.ok, 'contentType=', contentType);
-          throw { blob, status: response.status };
-        }
-        if (!blob || blob.size === 0) {
-          console.warn('[CTF downloadImage] empty or missing blob');
-          throw { blob: null, status: response.status };
-        }
-        console.log('[CTF downloadImage] success blob.type=', blob.type, 'size=', blob.size);
-        return blob;
-      }),
-      catchError(err => {
-        console.error('[CTF downloadImage] catchError', err);
-        if (err.blob instanceof Blob && err.blob.size > 0) {
-          return from(err.blob.text() as Promise<string>).pipe(
-            switchMap((text: string) => {
-              let msg = 'Image not found on server.';
-              try {
-                const data = JSON.parse(text) as { error?: string };
-                if (data && typeof data.error === 'string') msg = data.error;
-              } catch (_) {}
-              console.warn('[CTF downloadImage] error body (parsed)', msg);
-              return throwError(() => ({ status: err.status, error: { error: msg }, message: msg }));
-            })
-          );
-        }
-        return throwError(() => ({
-          status: err.status || 0,
-          error: { error: err.message || 'Error loading image' },
-          message: err.message || 'Error loading image'
-        }));
-      })
-    );
+    return this.http.get<ImageDataResponse>(url, { params });
   }
 
   submitFinalFlag(sessionId: string, flag: string): Observable<FinalFlagResponse> {
