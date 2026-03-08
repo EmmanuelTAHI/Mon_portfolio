@@ -153,6 +153,11 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# Sur Render : à l'exécution le dossier media/ du repo n'est pas toujours disponible.
+# Au build on copie media/* dans static/media/ ; en prod on sert les médias depuis là.
+if os.getenv("RENDER_EXTERNAL_URL"):
+    MEDIA_ROOT = STATIC_ROOT / "media"
+
 # URL publique du backend pour construire les URLs des médias (images projets, etc.).
 # En local : mettre BACKEND_PUBLIC_URL=http://localhost:8000 dans .env.
 # Sur Render : Render définit automatiquement RENDER_EXTERNAL_URL (ex. https://portfolio-backend-xxx.onrender.com).
