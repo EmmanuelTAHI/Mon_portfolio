@@ -62,6 +62,7 @@ Le dossier `frontend/api/` est pris en compte par Vercel (Serverless Functions).
   - `DJANGO_ALLOWED_HOSTS` : `*` ou `.onrender.com`
   - `DATABASE_URL` : fourni automatiquement si une base PostgreSQL est attachée
   - `CSRF_TRUSTED_ORIGINS` : URL du frontend Vercel, ex. `https://ton-projet.vercel.app`
+  - **`BACKEND_PUBLIC_URL`** : URL publique du backend sans slash final (ex. `https://portfolio-backend-i4rb.onrender.com`). Nécessaire pour que les images des projets s’affichent.
   - Optionnel (email) : `SMTP_USER`, `SMTP_PASSWORD`, `CONTACT_EMAIL`
 
 Un fichier `render.yaml` à la racine du repo permet de définir le service et la base (Blueprint).
@@ -98,7 +99,8 @@ Le front appelle **/api** (même origine) ; le proxy Vercel envoie tout vers `AP
    - `CSRF_TRUSTED_ORIGINS` : laisse vide pour l’instant
 8. **Create Web Service**. Une fois le déploiement terminé, note l’URL du backend (ex. `https://portfolio-backend-xxxx.onrender.com`).
 9. Dans **Environment**, ajoute ou modifie :  
-   `CSRF_TRUSTED_ORIGINS` = `https://ton-projet.vercel.app` (tu mettras la vraie URL Vercel après l’étape 2).
+   - `CSRF_TRUSTED_ORIGINS` = `https://ton-projet.vercel.app` (tu mettras la vraie URL Vercel après l’étape 2).  
+   - **`BACKEND_PUBLIC_URL`** = l’URL du backend **sans** slash final (ex. `https://portfolio-backend-xxxx.onrender.com`). Sans cette variable, les images des projets peuvent ne pas s’afficher en production.
 
 ### 2. Frontend sur Vercel
 
@@ -116,3 +118,4 @@ Le front appelle **/api** (même origine) ; le proxy Vercel envoie tout vers `AP
 - Sur **Vercel** : vérifier que `API_BASE_URL` pointe bien vers l’URL Render.
 
 Ensuite ouvre l’URL Vercel : le site doit s’afficher et les appels API (projets, contact, etc.) passent par le proxy vers Render.
+Les **images des projets** s’affichent uniquement si sur Render la variable **`BACKEND_PUBLIC_URL`** est définie (URL du backend sans slash final). Les logs Render affichent alors « Project image resolved: projects/xxx.png » ; si un fichier manque, « Project image file missing » apparaît.

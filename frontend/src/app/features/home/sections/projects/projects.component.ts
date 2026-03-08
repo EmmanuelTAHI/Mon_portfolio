@@ -5,6 +5,7 @@ import { SectionTitleComponent } from '@app/shared/section-title/section-title.c
 import { ProjectService, PaginatedProjectsResponse } from '@app/core/services/project.service';
 import { Project } from '@app/models/project.model';
 import { TranslationService } from '@app/core/services/translation.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-projects',
@@ -27,6 +28,15 @@ export class ProjectsComponent implements OnInit {
     private projectService: ProjectService,
     private translationService: TranslationService
   ) {}
+
+  /** URL d'affichage pour l'image d'un projet. Gère les URLs absolues et relatives (fallback avec backendMediaBase). */
+  getProjectImageUrl(p: Project): string {
+    if (!p?.image) return '';
+    if (p.image.startsWith('http://') || p.image.startsWith('https://')) return p.image;
+    const base = (environment as { backendMediaBase?: string }).backendMediaBase || '';
+    if (base) return base + (p.image.startsWith('/') ? p.image : '/' + p.image);
+    return p.image;
+  }
 
   ngOnInit(): void {
     this.loadProjects(1);

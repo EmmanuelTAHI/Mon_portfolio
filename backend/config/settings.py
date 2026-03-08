@@ -153,6 +153,12 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# URL publique du backend pour construire les URLs des médias (images projets, etc.).
+# En local : http://localhost:8000 (pour que les images pointent vers Django et non vers le proxy frontend).
+# Sur Render : https://portfolio-backend-xxx.onrender.com (à définir dans les variables d'environnement).
+# Si vide, on utilise request.build_absolute_uri() (peut être incorrect si le front proxy envoie un autre Host).
+BACKEND_PUBLIC_URL = (os.getenv("BACKEND_PUBLIC_URL", "").strip() or None)
+
 
 # Django REST Framework
 
@@ -220,4 +226,29 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "ctf-rate-limiting",
     }
+}
+
+# Logging: médias et API pour diagnostic sur Render
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{levelname}] {name} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "apps.projects.serializers": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+    },
 }

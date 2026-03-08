@@ -1,5 +1,7 @@
-// Production : sur Vercel on utilise /api (proxy vers le backend). Sur Render, utiliser "npm run build:render" pour injecter l'URL du backend.
+// Production : sur Vercel on utilise /api (proxy vers le backend). L'API doit renvoyer des URLs absolues pour les images.
 export const environment = {
   production: true,
   apiBase: '/api',
+  /** En prod l'API renvoie des URLs absolues (BACKEND_PUBLIC_URL sur Render). Pas de préfixe. */
+  backendMediaBase: '',
 };

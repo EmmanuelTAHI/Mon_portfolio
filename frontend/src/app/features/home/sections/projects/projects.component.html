@@ -21,7 +21,7 @@
                 <div class="project-image-wrapper aspect-video min-h-[180px] w-full bg-black/80 border-b border-white/10 flex items-center justify-center overflow-hidden relative">
                   @if (showProjectImage(p)) {
                     <img
-                      [src]="p.image"
+                      [src]="getProjectImageUrl(p)"
                       [alt]="p.title"
                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"

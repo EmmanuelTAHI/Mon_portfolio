@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProjectService } from '@app/core/services/project.service';
 import { Project } from '@app/models/project.model';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-project-detail',
@@ -20,6 +21,14 @@ export class ProjectDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private projectService: ProjectService
   ) {}
+
+  getProjectImageUrl(p: Project | null): string {
+    if (!p?.image) return '';
+    if (p.image.startsWith('http://') || p.image.startsWith('https://')) return p.image;
+    const base = (environment as { backendMediaBase?: string }).backendMediaBase || '';
+    if (base) return base + (p.image.startsWith('/') ? p.image : '/' + p.image);
+    return p.image;
+  }
 
   ngOnInit(): void {
     const slug = this.route.snapshot.paramMap.get('slug');
