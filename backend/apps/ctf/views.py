@@ -447,10 +447,23 @@ def submit_final_flag(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_leaderboard(request):
-    """Récupère le top 5 du leaderboard"""
-    top_5 = LeaderboardEntry.objects.all().order_by('completion_time_seconds', 'completed_at')[:5]
-    serializer = LeaderboardEntrySerializer(top_5, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    """Récupère le leaderboard avec pagination"""
+    try:
+        limit = int(request.GET.get('limit', 5))
+        offset = int(request.GET.get('offset', 0))
+    except ValueError:
+        limit = 5
+        offset = 0
+
+    entries = LeaderboardEntry.objects.all().order_by('completion_time_seconds', 'completed_at')
+    total_count = entries.count()
+    paginated_entries = entries[offset:offset+limit]
+    
+    serializer = LeaderboardEntrySerializer(paginated_entries, many=True)
+    return Response({
+        'results': serializer.data,
+        'total_count': total_count
+    }, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

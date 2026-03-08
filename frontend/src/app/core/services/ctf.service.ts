@@ -49,6 +49,11 @@ export interface LeaderboardEntry {
   completed_at: string;
 }
 
+export interface PaginatedLeaderboard {
+  results: LeaderboardEntry[];
+  total_count: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class CtfService {
   private baseUrl = `${API_BASE}/ctf/`;
@@ -89,8 +94,11 @@ export class CtfService {
     });
   }
 
-  getLeaderboard(): Observable<LeaderboardEntry[]> {
-    return this.http.get<LeaderboardEntry[]>(`${this.baseUrl}leaderboard/`);
+  getLeaderboard(limit: number = 5, offset: number = 0): Observable<PaginatedLeaderboard> {
+    const params = new HttpParams()
+      .set('limit', limit.toString())
+      .set('offset', offset.toString());
+    return this.http.get<PaginatedLeaderboard>(`${this.baseUrl}leaderboard/`, { params });
   }
 
   getUserRanking(sessionId: string): Observable<LeaderboardEntry> {

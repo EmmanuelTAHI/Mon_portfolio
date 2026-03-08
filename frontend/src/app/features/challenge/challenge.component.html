@@ -22,6 +22,26 @@
         <p class="font-jetbrains text-gray-400 text-xs text-center py-4">No results</p>
       }
     </div>
+    <!-- Pagination du Leaderboard public -->
+    @if (totalLeaderboardCount > 0) {
+      <div class="flex justify-between items-center mt-3 border-t border-neonGreen/30 pt-2">
+        <button 
+          (click)="prevLeaderboardPage()" 
+          [disabled]="leaderboardOffset === 0"
+          class="text-neonGreen hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-xs transition-colors">
+          &lt; Prev
+        </button>
+        <span class="text-gray-400 text-xs font-jetbrains">
+          {{ leaderboardOffset + 1 }} - {{ leaderboardOffset + leaderboard.length }} of {{ totalLeaderboardCount }}
+        </span>
+        <button 
+          (click)="nextLeaderboardPage()" 
+          [disabled]="leaderboardOffset + leaderboardLimit >= totalLeaderboardCount"
+          class="text-neonGreen hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-xs transition-colors">
+          Next &gt;
+        </button>
+      </div>
+    }
   </div>
   
   <!-- Bannière latérale avec timer -->
@@ -280,6 +300,26 @@
                   <p class="font-jetbrains text-gray-400 text-center py-4">No results yet</p>
                 }
               </div>
+              <!-- Pagination Principale -->
+              @if (totalLeaderboardCount > 0) {
+                <div class="flex justify-between items-center mt-6 border-t border-neonGreen/30 pt-4">
+                  <button 
+                    (click)="prevLeaderboardPage()" 
+                    [disabled]="leaderboardOffset === 0"
+                    class="text-neonGreen hover:text-white disabled:opacity-50 disabled:cursor-not-allowed font-jetbrains transition-colors">
+                    &lt; Previous
+                  </button>
+                  <span class="text-gray-400 font-jetbrains">
+                    Showing {{ leaderboardOffset + 1 }} - {{ leaderboardOffset + leaderboard.length }} of {{ totalLeaderboardCount }}
+                  </span>
+                  <button 
+                    (click)="nextLeaderboardPage()" 
+                    [disabled]="leaderboardOffset + leaderboardLimit >= totalLeaderboardCount"
+                    class="text-neonGreen hover:text-white disabled:opacity-50 disabled:cursor-not-allowed font-jetbrains transition-colors">
+                    Next &gt;
+                  </button>
+                </div>
+              }
             </div>
 
             <!-- Your result -->

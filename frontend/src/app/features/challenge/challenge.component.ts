@@ -37,6 +37,11 @@ export class ChallengeComponent implements OnInit, OnDestroy {
   leaderboard: any[] = [];
   userEntry: any = null;
 
+  // Pagination du leaderboard
+  leaderboardOffset = 0;
+  leaderboardLimit = 5;
+  totalLeaderboardCount = 0;
+
   // Timer
   elapsedTime = 0;
   timerInterval: any = null;
@@ -396,14 +401,29 @@ export class ChallengeComponent implements OnInit, OnDestroy {
   }
 
   loadLeaderboard(): void {
-    this.ctfService.getLeaderboard().subscribe({
-      next: (entries) => {
-        this.leaderboard = entries;
+    this.ctfService.getLeaderboard(this.leaderboardLimit, this.leaderboardOffset).subscribe({
+      next: (response) => {
+        this.leaderboard = response.results;
+        this.totalLeaderboardCount = response.total_count;
       },
       error: (error) => {
         console.error('Erreur lors du chargement du leaderboard:', error);
       }
     });
+  }
+
+  nextLeaderboardPage(): void {
+    if (this.leaderboardOffset + this.leaderboardLimit < this.totalLeaderboardCount) {
+      this.leaderboardOffset += this.leaderboardLimit;
+      this.loadLeaderboard();
+    }
+  }
+
+  prevLeaderboardPage(): void {
+    if (this.leaderboardOffset >= this.leaderboardLimit) {
+      this.leaderboardOffset -= this.leaderboardLimit;
+      this.loadLeaderboard();
+    }
   }
 
   loadUserRanking(): void {
@@ -439,5 +459,7 @@ export class ChallengeComponent implements OnInit, OnDestroy {
     this.successMessage = '';
     this.leaderboard = [];
     this.userEntry = null;
+    this.leaderboardOffset = 0;
+    this.totalLeaderboardCount = 0;
   }
 }
