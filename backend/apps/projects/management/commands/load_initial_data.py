@@ -79,8 +79,7 @@ class Command(BaseCommand):
                 "description": "A full-featured web scraping platform built with Python following MVC architecture. Targets Alibaba with support for multiple categories, CSV export, and image downloads. Includes rate limiting and error handling.",
                 "category": "web",
                 "technologies": "Python, MVC, Requests, BeautifulSoup, CSV, Image Download",
-                "repo_url": "https://github.com",
-                "demo_url": "",
+                "github_url": "https://github.com",
                 "is_featured": True,
             },
             {
@@ -90,8 +89,7 @@ class Command(BaseCommand):
                 "description": "Collection of custom cybersecurity tools including reconnaissance automation, vulnerability scanning helpers, and security testing scripts for learning and lab environments.",
                 "category": "tool",
                 "technologies": "Python, Bash, Nmap, Security",
-                "repo_url": "https://github.com",
-                "demo_url": "",
+                "github_url": "https://github.com",
                 "is_featured": True,
             },
             {
@@ -101,8 +99,7 @@ class Command(BaseCommand):
                 "description": "Scripts for automating common pentesting tasks and simulating attack scenarios. Used in personal labs and CTF practice.",
                 "category": "script",
                 "technologies": "Python, Bash, Metasploit, Nmap",
-                "repo_url": "https://github.com",
-                "demo_url": "",
+                "github_url": "https://github.com",
                 "is_featured": True,
             },
             {
@@ -112,8 +109,7 @@ class Command(BaseCommand):
                 "description": "Algorithmic project to optimize short-term stock investments under given constraints. Includes backtesting and constraint handling.",
                 "category": "other",
                 "technologies": "Python, Algorithms, Data Analysis",
-                "repo_url": "https://github.com",
-                "demo_url": "",
+                "github_url": "https://github.com",
                 "is_featured": False,
             },
             {
@@ -123,8 +119,7 @@ class Command(BaseCommand):
                 "description": "Web platform to organize and display CTF writeups and challenges. Search, filter by category, and share solutions.",
                 "category": "ctf",
                 "technologies": "Angular, Django, PostgreSQL, CTF",
-                "repo_url": "https://github.com",
-                "demo_url": "",
+                "github_url": "https://github.com",
                 "is_featured": True,
             },
         ]
