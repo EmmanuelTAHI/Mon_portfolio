@@ -34,6 +34,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         fixture_path = settings.BASE_DIR / "fixtures" / "portfolio_data.json"
+        self.stdout.write(f"Looking for fixture at: {fixture_path.resolve()}")
         if not fixture_path.exists():
             self.stdout.write(
                 self.style.WARNING(
@@ -41,6 +42,7 @@ class Command(BaseCommand):
                 )
             )
             sys.exit(1)
+        self.stdout.write(self.style.SUCCESS(f"Found fixture ({fixture_path.stat().st_size} bytes). Loading..."))
 
         if options["clear"]:
             self.stdout.write("Clearing existing data...")
@@ -59,4 +61,6 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS("Production data loaded successfully."))
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Load failed: {e}"))
+            import traceback
+            traceback.print_exc()
             sys.exit(1)
