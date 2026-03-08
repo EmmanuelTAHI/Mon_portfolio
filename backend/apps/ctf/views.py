@@ -321,7 +321,11 @@ def download_image(request):
             content_type = 'image/jpeg'
         logger.info("[CTF download_image] content_type=%s sending %s bytes", content_type, data_len)
 
-        return HttpResponse(data, content_type=content_type)
+        response = HttpResponse(data, content_type=content_type)
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
+        return response
     except Exception as e:
         logger.exception("[CTF download_image] 500 Error reading image path=%s: %s", image_path, e)
         return Response({'error': 'Error reading image'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
