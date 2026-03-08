@@ -45,6 +45,14 @@ local_settings.py
 # -----------------
 
 node_modules/
+
+# -----------------
+# Angular / Frontend build
+# -----------------
+
+frontend/dist/
+frontend/.angular/
+
 # -----------------
 # Render / deployment
 # -----------------
