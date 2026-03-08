@@ -55,7 +55,7 @@ Le dossier `frontend/api/` est pris en compte par Vercel (Serverless Functions).
 
 - **Root Directory** : `backend`
 - **Build Command** : `pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput`
-- **Start Command** : `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT`
+- **Start Command** : `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 120`
 - **Variables d’environnement** (Render → Environment) :
   - `DJANGO_SECRET_KEY` : clé secrète (générer une valeur forte)
   - `DJANGO_DEBUG` : `False`
