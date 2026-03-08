@@ -3,7 +3,10 @@
  * Toutes les requêtes /api/* sont renvoyées vers API_BASE_URL (ton service Render).
  * Définir sur Vercel : API_BASE_URL = https://ton-backend.onrender.com
  *
- * Avec rewrite source "/api/:path*" → destination "/api/proxy", Vercel envoie le path en query (?path=projects/1).
+ * Gère correctement les réponses binaires (images, etc.) : utilisation de arrayBuffer()
+ * et en-têtes Content-Type / Content-Length explicites pour éviter corruption et perte d'en-têtes.
+ *
+ * Avec rewrite source "/api/:path*" → destination "/api/proxy", Vercel envoie le path en query (?path=...).
  */
 export default async function handler(req, res) {
   const backend = process.env.API_BASE_URL;
@@ -40,20 +43,30 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(targetUrl, opts);
-    const contentType = response.headers.get('content-type') || '';
-    const text = await response.text();
+    const contentType = (response.headers.get('content-type') || '').toLowerCase();
+    const contentLength = response.headers.get('content-length');
 
     res.status(response.status);
+
     if (contentType.includes('application/json')) {
+      const text = await response.text();
       try {
         res.json(JSON.parse(text));
       } catch {
         res.setHeader('Content-Type', contentType).send(text);
       }
-    } else {
-      response.headers.forEach((v, k) => res.setHeader(k, v));
-      res.send(text);
+      return;
     }
+
+    // Réponse binaire (images, fichiers) : ne jamais utiliser .text() pour éviter corruption
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    res.setHeader('Content-Type', contentType || 'application/octet-stream');
+    if (contentLength !== undefined && contentLength !== null) {
+      res.setHeader('Content-Length', contentLength);
+    }
+    res.send(buffer);
   } catch (err) {
     console.error('Proxy error:', err);
     res.status(502).json({
