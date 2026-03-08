@@ -154,10 +154,12 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # URL publique du backend pour construire les URLs des médias (images projets, etc.).
-# En local : http://localhost:8000 (pour que les images pointent vers Django et non vers le proxy frontend).
-# Sur Render : https://portfolio-backend-xxx.onrender.com (à définir dans les variables d'environnement).
-# Si vide, on utilise request.build_absolute_uri() (peut être incorrect si le front proxy envoie un autre Host).
-BACKEND_PUBLIC_URL = (os.getenv("BACKEND_PUBLIC_URL", "").strip() or None)
+# En local : mettre BACKEND_PUBLIC_URL=http://localhost:8000 dans .env.
+# Sur Render : Render définit automatiquement RENDER_EXTERNAL_URL (ex. https://portfolio-backend-xxx.onrender.com).
+# On l'utilise en secours si BACKEND_PUBLIC_URL n'est pas défini.
+BACKEND_PUBLIC_URL = (
+    (os.getenv("BACKEND_PUBLIC_URL", "").strip() or os.getenv("RENDER_EXTERNAL_URL", "").strip()) or None
+)
 
 
 # Django REST Framework
