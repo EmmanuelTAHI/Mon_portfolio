@@ -63,7 +63,12 @@ Le dossier `frontend/api/` est pris en compte par Vercel (Serverless Functions).
   - `DATABASE_URL` : fourni automatiquement si une base PostgreSQL est attachée
   - `CSRF_TRUSTED_ORIGINS` : URL du frontend Vercel, ex. `https://ton-projet.vercel.app`
   - **`BACKEND_PUBLIC_URL`** : URL publique du backend sans slash final (ex. `https://portfolio-backend-i4rb.onrender.com`). Nécessaire pour que les images des projets s’affichent.
-  - Optionnel (email) : `SMTP_USER`, `SMTP_PASSWORD`, `CONTACT_EMAIL`
+  - **Formulaire de contact (SMTP)** : pour que les messages arrivent en prod, définir sur Render :
+    - `SMTP_HOST`, `SMTP_PORT` (ex. 587), `SMTP_USE_TLS` (True)
+    - `SMTP_USER` et `SMTP_PASSWORD`
+    - `CONTACT_EMAIL` : adresse qui reçoit les messages
+    - `SMTP_FROM_EMAIL` (optionnel) : expéditeur affiché
+    **Recommandation** : utiliser **SendGrid** (gratuit, fiable depuis Render) plutôt que Gmail, qui bloque souvent les envois depuis les serveurs cloud. Voir la section « Formulaire de contact » ci‑dessous.
 
 Un fichier `render.yaml` à la racine du repo permet de définir le service et la base (Blueprint).
 
@@ -120,3 +125,42 @@ Le front appelle **/api** (même origine) ; le proxy Vercel envoie tout vers `AP
 Ensuite ouvre l’URL Vercel : le site doit s’afficher et les appels API (projets, contact, etc.) passent par le proxy vers Render.
 Les **images des projets** s’affichent uniquement si sur Render la variable **`BACKEND_PUBLIC_URL`** est définie (URL du backend sans slash final). Les logs Render affichent alors « Project image resolved: projects/xxx.png » ; si un fichier manque, « Project image file missing » apparaît.  
 En cas de problème : à chaque build, la commande **`python manage.py diagnose_media`** s’exécute et affiche dans les logs Render un rapport (MEDIA_ROOT, fichiers présents, URL par projet, lien de test). Tu peux aussi la lancer à la main dans le Shell Render.
+
+---
+
+## Formulaire de contact (SMTP sur Render)
+
+En local, l’email part en console ou via ton SMTP. **Sur Render**, il faut configurer les variables d’environnement SMTP pour que les messages du formulaire soient envoyés et reçus.
+
+### Option recommandée : SendGrid (gratuit, fiable depuis Render)
+
+Gmail bloque souvent les connexions SMTP depuis les hébergeurs (Render, etc.). SendGrid fonctionne bien et offre un forfait gratuit (100 e-mails/jour).
+
+1. Crée un compte sur [sendgrid.com](https://sendgrid.com).
+2. **Settings** → **API Keys** → **Create API Key** (nom libre, permission « Mail Send »).
+3. Copie la clé API (elle ne s’affiche qu’une fois).
+4. **Settings** → **Sender Authentication** : ajoute et vérifie un expéditeur (l’email affiché comme « De »).
+5. Sur **Render** → ton service backend → **Environment**, ajoute :
+
+| Variable | Valeur |
+|---------|--------|
+| `SMTP_HOST` | `smtp.sendgrid.net` |
+| `SMTP_PORT` | `587` |
+| `SMTP_USE_TLS` | `True` |
+| `SMTP_USER` | `apikey` (le mot littéral « apikey ») |
+| `SMTP_PASSWORD` | ta clé API SendGrid |
+| `CONTACT_EMAIL` | l’email qui reçoit les messages (ex. ton Gmail) |
+| `SMTP_FROM_EMAIL` | l’email vérifié dans SendGrid (expéditeur affiché) |
+
+6. Redéploie le backend. Teste le formulaire sur le site Vercel.
+
+Si l’envoi échoue encore, consulte les **logs Render** (onglet Logs) au moment du clic sur « Envoyer » : le message d’erreur SMTP (ex. « Authentication failed ») y apparaît et permet de corriger la config.
+
+### Option Gmail (souvent bloquée depuis Render)
+
+Si tu préfères Gmail :
+
+- Utilise un **mot de passe d’application** (compte Google → Sécurité → Validation en 2 étapes → Mots de passe des applications), pas ton mot de passe habituel.
+- Sur Render : `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, `SMTP_USE_TLS=True`, `SMTP_USER=ton@gmail.com`, `SMTP_PASSWORD=le mot de passe d’application`, `CONTACT_EMAIL=ton@gmail.com`.
+
+Si tu vois « Unable to send email » en prod, Gmail refuse probablement la connexion depuis Render ; dans ce cas, passer à SendGrid est la solution la plus simple.

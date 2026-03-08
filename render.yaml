@@ -26,8 +26,21 @@ services:
         sync: false
       - key: BACKEND_PUBLIC_URL
         sync: false
-      # BACKEND_PUBLIC_URL = URL du service (ex: https://portfolio-backend-xxx.onrender.com) pour que les images projets s'affichent.
-      # Optionnel : SMTP_USER, SMTP_PASSWORD, CONTACT_EMAIL, etc.
+      # Formulaire de contact : voir DEPLOY.md section "Formulaire de contact (SMTP sur Render)".
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USE_TLS
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: CONTACT_EMAIL
+        sync: false
+      - key: SMTP_FROM_EMAIL
+        sync: false
 
 databases:
   - name: portfolio-db

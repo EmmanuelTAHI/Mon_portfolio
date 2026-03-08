@@ -69,7 +69,7 @@ Source: {contact_message.source}
               fail_silently=False,
           )
       except Exception as e:
-          logger.exception("SMTP send failed for contact message id=%s", contact_message.id)
+          logger.exception("SMTP send failed for contact message id=%s: %s", contact_message.id, str(e))
           return Response(
               {
                   "detail": "Unable to send email. Please try again later or use the social links below.",
