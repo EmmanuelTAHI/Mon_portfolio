@@ -292,7 +292,7 @@ export class ChallengeComponent implements OnInit, OnDestroy {
         this.instructions = DEFAULT_INSTRUCTIONS;
       }
     } else if (this.currentStep === 'final_flag') {
-      this.goToHouseImage();
+      this.router.navigate(['/_my_challenge/image'], { queryParams: { session_id: this.sessionId } });
     }
   }
 
@@ -312,7 +312,7 @@ export class ChallengeComponent implements OnInit, OnDestroy {
     this.ctfService.ubiquitiLogin(this.sessionId, this.loginUsername.trim(), this.loginPassword.trim()).subscribe({
       next: (response) => {
         if (response.success) {
-          // Rediriger vers la page d'image
+          this.triggerImageDownload();
           this.router.navigate(['/_my_challenge/image'], { queryParams: { session_id: this.sessionId } });
         } else {
           this.errorMessage = response.message;
@@ -321,6 +321,32 @@ export class ChallengeComponent implements OnInit, OnDestroy {
       error: (error) => {
         this.errorMessage = error.error?.error || error.error?.message || 'Login error';
       }
+    });
+  }
+
+  /** Télécharge l'image CTF en arrière-plan et déclenche le téléchargement navigateur. */
+  triggerImageDownload(): void {
+    this.ctfService.downloadImage(this.sessionId).subscribe({
+      next: (data) => {
+        if (!data.image_data || !data.content_type) return;
+        const byteChars = atob(data.image_data);
+        const byteArray = new Uint8Array(byteChars.length);
+        for (let i = 0; i < byteChars.length; i++) {
+          byteArray[i] = byteChars.charCodeAt(i);
+        }
+        const blob = new Blob([byteArray], { type: data.content_type });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = data.filename || 'Ma_maison.jpg';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 200);
+      },
+      error: () => {}
     });
   }
 
