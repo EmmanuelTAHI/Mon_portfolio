@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from .models import BlogPost
@@ -12,6 +13,6 @@ class BlogPostSerializer(serializers.ModelSerializer):
       data = super().to_representation(instance)
       request = self.context.get("request")
       if request and data.get("cover_image"):
-          data["cover_image"] = request.build_absolute_uri(data["cover_image"])
+          data["cover_image"] = request.build_absolute_uri(settings.MEDIA_URL + data["cover_image"])
       return data
 
